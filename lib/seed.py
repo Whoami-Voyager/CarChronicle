@@ -4,8 +4,6 @@ from urllib.request import Request, urlopen
 # Send a GET request to the URL
 response = Request('https://www.autoevolution.com/cars/', headers={'User-agent': 'Mozilla/5.0'})
 webpage = urlopen(response).read()
-print(webpage)
-
 
 import sqlite3
 from bs4 import BeautifulSoup as soup
@@ -13,8 +11,8 @@ from urllib.request import Request, urlopen
 conncection = sqlite3.connect("cars.db")
 cursor = conncection.cursor()
 
-cursor.execute('''DROP TABLE companies''')
-cursor.execute('''DROP TABLE cars''')
+cursor.execute('''DROP TABLE IF EXISTS companies''')
+cursor.execute('''DROP TABLE IF EXISTS cars''')
 
 cursor.execute('''
     CREATE TABLE companies (
@@ -50,25 +48,28 @@ response = Request('https://www.autoevolution.com/cars/', headers={'User-agent':
 webpage = urlopen(response).read()
 soup_karl = soup(webpage, 'html.parser')
 
-all_cars = soup_karl.findAll('div', class_="container carlist clearfix")
-for detroit in all_cars:
+index_num = -1
+all_cars = soup_karl.find('div', class_="container carlist clearfix")
+production = all_cars.findAll('div', class_="col3width fl carnums")
+names = all_cars.findAll('div', class_="col2width fl bcol-white carman")
+for detroit in names:
     companies = detroit.findAll('h5')
-    for title in companies:
-        company_name = title.text
-        a_tag = title.find_all('a')
+    index_num += 1
+    for company in companies:
+        company_list = company.text.upper()
+        supply = production[index_num]
+        a_tag = company.findAll('a')
         for link in a_tag:
             company_links.append(link.get('href'))
-        for company in all_cars:
-            production = company.findAll('div', class_="col3width fl carnums")
-            for number in production:
-                produced = number.findAll('b', class_="col-green2")
-                not_produced = number.findAll('b', class_="col-red")
-                for value in produced:
-                    assembly = int(value.text)
-                for value in not_produced:
-                    assembly_not = int(value.text)
-            cursor.execute('''INSERT INTO companies (name, in_pr, ds_pr)
-            VALUES(?,?,?)''', (company_name, assembly, assembly_not))
+        for manufacture in supply:
+            assembly = supply.findAll('b', class_="col-green2")
+            not_assembly = supply.findAll('b', class_="col-red")
+            for value in assembly:
+                models = int(value.text)
+            for value in not_assembly:
+                discontinued = int(value.text)
+        cursor.execute('''INSERT INTO companies (name, in_pr, ds_pr)
+        VALUES(?, ?, ?)''', (company_list, models, discontinued))
 
 conncection.commit()
 
