@@ -1,10 +1,3 @@
-from bs4 import BeautifulSoup
-from urllib.request import Request, urlopen
-
-# Send a GET request to the URL
-response = Request('https://www.autoevolution.com/cars/', headers={'User-agent': 'Mozilla/5.0'})
-webpage = urlopen(response).read()
-
 import sqlite3
 from bs4 import BeautifulSoup as soup
 from urllib.request import Request, urlopen
@@ -28,20 +21,17 @@ cursor.execute('''
         model TEXT,
         type TEXT,
         generations INTEGER,
-        description TEXT,
-        in_pr BOOLEAN,
-        country TEXT,
+        years TEXT,
         engine TEXT,
-        years TEXT)
+        country TEXT,
+        in_pr BOOLEAN,
+        description TEXT)
 ''')
 
 company_links = []
-model_list = []
-model_type = []
 model_links = []
-model_years = []
 
-print("loading car information, please wait... a while...")
+print("Seeding Cars. Hold on to your butts...")
 
 # retrieves car companies info
 response = Request('https://www.autoevolution.com/cars/', headers={'User-agent': 'Mozilla/5.0'})
@@ -73,27 +63,55 @@ for detroit in names:
 
 conncection.commit()
 
-# for page in company_links:
-#     url = Request(page, headers={'User-agent': 'Mozilla/5.0'})
-#     info = urlopen(url).read()
-#     cars = soup(info, 'html.parser')
+index_tracker = -1
+for page in company_links:
+    url = Request(page, headers={'User-agent': 'Mozilla/5.0'})
+    info = urlopen(url).read()
+    cars = soup(info, 'html.parser')
 
-#     car_info = cars.findAll('div', class_="col2width bcol-white fl")
-#     for car in car_info:
-#         ca_tag = car.findAll('a')
-#         car_name = car.findAll('h4')
-#         car_type = car.findAll('p', class_='body')
-#         for tag in ca_tag:
-#             model_links.append(tag.get('href'))
-#         for name in car_name:
-#             model_list.append(name.text)
-#         for genre in car_type:
-#             model_type.append(genre.text)
+    index_tracker += 1
+    car_div = cars.find('div', class_="carmodels col23width clearfix")
+    model_name = car_div.findAll('div', class_="col2width bcol-white fl")
+    model_generation = car_div.findAll('div', class_="col3width fl")
+    for model in model_generation:
+        generations = model.findAll('b', class_="col-green2")
+        years = model.findAll('span')
+        model_namses = model_name[index_tracker]
+        print(model_namses)
+        for generation in generations:
+            if generations:
+                car_generations = int(generation.text)
+            else:
+                car_generations = None
+        for year in years:
+            model_years = year.text
+        model_catalog = model_namses.findAll('h4')
+        for aluminum in model_catalog:
+            pass
 
-#     model_years = cars.findAll('div', class_='col3width')
-#     for year in model_years:
-#         production_years = year.findAll('span')
-#         for production_year in production_years:
-#             pass
-#             # model_years.append(production_year.text)
 
+        
+
+    # car_info = cars.findAll('div', class_="col2width bcol-white fl")
+    # for car in car_info:
+    #     ca_tag = car.findAll('a')
+    #     car_name = car.findAll('h4')
+    #     car_type = car.findAll('p', class_='body')
+    #     for tag in ca_tag:
+    #         model_links.append(tag.get('href'))
+    #     for name in car_name:
+    #         model_list = name.text
+    #     for genre in car_type:
+    #         model_type = genre.text
+    #     cursor.execute('''INSERT INTO cars (model, type, generations, years, engine, country, description)
+    #     VALUES(?, ?, ?, ?, ?, ?, ?)''', (model_list, model_type, 1, 'h', 'h', 'h', 'h' ))
+
+    # model_years = cars.findAll('div', class_='col3width')
+    # for year in model_years:
+    #     production_years = year.findAll('span')
+    #     for production_year in production_years:
+    #         pass
+    #         model_years.append(production_year.text)
+
+
+print("Cars are seeded")
