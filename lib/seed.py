@@ -25,7 +25,9 @@ cursor.execute('''
         generations INTEGER,
         years TEXT,
         in_pr BOOLEAN,
-        company_id INTEGER)
+        company_id INTEGER,
+        FOREIGN KEY(company_id) REFERENCES companies(id)
+    )
 ''')
 
 # Holds the links of the companies and models
@@ -88,9 +90,9 @@ for page in company_links:
     info = urlopen(url).read()
     cars = soup(info, 'html.parser')
 
-    # increases the number to keep track of the id, resetting for every company
+    # increases the number to keep track of the id, increasing for every company
     id_tracker += 1
-    # initializes outside of the model loop so it resets every one
+    # initializes outside of the model loop so it resets every company
     index_tracker = -1
     # intitializes the true or false statement of if the car is in production
     production_boolean = False
@@ -129,7 +131,7 @@ for page in company_links:
         car_genre = model_catalog.findAll('p', class_="body")
         # get the car type
         for value in car_genre:
-            car_type = value.text.capitalize()
+            car_type = value.text.capitalize()[:-1]
         # finds all the elements with the links to the models
         car_links = model_catalog.findAll('a')
         # gets the links within that element
