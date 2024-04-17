@@ -14,7 +14,8 @@ cursor.execute('''
         id INTEGER PRIMARY KEY,
         name TEXT,
         in_pr INTEGER,
-        ds_pr INTEGER)
+        ds_pr INTEGER,
+        description TEXT)
 ''')
 
 cursor.execute('''
@@ -76,8 +77,8 @@ for detroit in names:
             for value in not_assembly:
                 discontinued = int(value.text)
         # inserts into the tables
-        cursor.execute('''INSERT INTO companies (name, in_pr, ds_pr)
-        VALUES(?, ?, ?)''', (company_list, models, discontinued))
+        cursor.execute('''INSERT INTO companies (name, in_pr, ds_pr, description)
+        VALUES(?, ?, ?, ?)''', (company_list, models, discontinued, None))
 
 # commits to database
 conncection.commit()
@@ -92,27 +93,55 @@ for page in company_links:
 
     # increases the number to keep track of the id, increasing for every company
     id_tracker += 1
-    # initializes outside of the model loop so it resets every company
-    index_tracker = -1
-    # intitializes the true or false statement of if the car is in production
-    production_boolean = False
-    # finds the two divs that holds all the car models within the company page
-    car_model = cars.find('div', class_="carmodels col23width clearfix")
-    # finds the div that holds the name, type and link for each model
-    model_name = car_model.findAll('div', class_="col2width bcol-white fl")
-    # finds the div that holds the generations and years of each car model
-    model_generation = car_model.findAll('div', class_="col3width fl")
-    # loops through the model generations so it can get the information of each
-    for model in model_generation:
-        # increases the index by one for each model
-        index_tracker += 1
+    # finds the description text within the car page
+    company_description = cars.find('div', class_="txt prodhist")
+    # if there is no text in the description, it puts in the string Null for the app to interpret
+    if company_description.text == "":
+        description_text = "Null"
+    else:
+        description_text = company_description.text
+    # finds the div that holds all the current and discontinued cars
+    car_div = cars.find('div', class_="col2width")
+    # finds the divs that holds all the current car models within the company page
+    current_model = car_div.findAll('div', class_="carmod clearfix")
+    # finds the divs that holds all the old car models within the company page
+    discontinued_model = car_div.findAll('div', class_="carmod clearfix disc")
+    # loops through that div
+    for model in current_model:
+        # sets the in productioni value to true
+        production_boolean = True
         # finds the currently produced model generations element
         current_generations = model.findAll('b', class_="col-green2")
         # loops through current generation div and sets the boolean to true if it finds it
         for generation in current_generations:
             car_generations = int(generation.text)
-            production_boolean = True
-        # finds the phased out models and sets generations to that
+        # finds the years
+        years = model.findAll('span')
+        for year in years:
+            model_years = year.text
+        # finds all the model names within the div
+        model_namses = model.findAll('h4')
+        # gets the name
+        for text in model_namses:
+            car_model_name = text.text
+        # finds the car type within the div
+        car_genre = model.findAll('p', class_="body")
+        # get the car type
+        for value in car_genre:
+            car_type = value.text.capitalize()[:-1]
+        # finds all the elements with the links to the models
+        car_links = model.findAll('a')
+        # gets the links within that element
+        for link in car_links:
+            model_links.append(link.get('href'))
+        # inserts into the table
+        cursor.execute('''INSERT INTO cars(model, type, generations, years, in_pr, company_id)
+        VALUES(?, ?, ?, ?, ?, ?)''',(car_model_name, car_type, car_generations, model_years, production_boolean, id_tracker))
+
+    for model in discontinued_model:
+        # sets the in production value to false
+        production_boolean = False
+        # finds the generations numbers and sets it to that
         old_generation = model.findAll('b', class_="col-red")
         for generation in old_generation:
             car_generations = int(generation.text)
@@ -120,26 +149,33 @@ for page in company_links:
         years = model.findAll('span')
         for year in years:
             model_years = year.text
-        # grabs the model name div by index
-        model_catalog = model_name[index_tracker]
         # finds all the model names within the div
-        model_namses = model_catalog.findAll('h4')
+        model_namses = model.findAll('h4')
         # gets the name
         for text in model_namses:
             car_model_name = text.text
         # finds the car type within the div
-        car_genre = model_catalog.findAll('p', class_="body")
+        car_genre = model.findAll('p', class_="body")
         # get the car type
         for value in car_genre:
             car_type = value.text.capitalize()[:-1]
         # finds all the elements with the links to the models
-        car_links = model_catalog.findAll('a')
+        car_links = model.findAll('a')
         # gets the links within that element
         for link in car_links:
             model_links.append(link.get('href'))
         # inserts into the table
         cursor.execute('''INSERT INTO cars(model, type, generations, years, in_pr, company_id)
         VALUES(?, ?, ?, ?, ?, ?)''',(car_model_name, car_type, car_generations, model_years, production_boolean, id_tracker))
+
+    # puts into the company table the description with the correct id
+    cursor.execute(
+        '''
+        UPDATE companies
+        SET description = ?
+        WHERE id = ?
+        ''',(description_text, id_tracker)
+        )
 
 # commits to database
 conncection.commit()
