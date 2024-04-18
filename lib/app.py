@@ -321,6 +321,7 @@ if __name__ == "__main__":
 
     # the while loop that runs during the entirety of the application
     while True:
+        os.system('clear')
         # intro text
         print(f"{title_art}\n")
         print("Welcome to Car Chronicle!\n")
