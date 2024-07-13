@@ -64,19 +64,19 @@
         },
         "inquirer": {
             "hashes": [
-                "sha256:273a4e4a4345ac1afdb17408d40fc8dccf3485db68203357919468561035a763",
-                "sha256:33b09efc1b742b9d687b540296a8b6a3f773399673321fcc2ab0eb4c109bf9b5"
+                "sha256:2722cec4460b289aab21fc35a3b03c932780ff4e8004163955a8215e20cfd35e",
+                "sha256:c4be527e8c4e7a1b2c909aa064ef6f1a4466be42224290f21f07f6d5947171f4"
             ],
             "index": "pypi",
-            "version": "==3.2.4"
+            "version": "==3.3.0"
         },
         "readchar": {
             "hashes": [
-                "sha256:b4b31dd35de4897be738f27e8f9f62426b5fedb54b648364987e30ae534b71bc",
-                "sha256:e0dae942d3a746f8d5423f83dbad67efe704004baafe31b626477929faaee472"
+                "sha256:6f44d1b5f0fd93bd93236eac7da39609f15df647ab9cea39f5bc7478b3344b99",
+                "sha256:d163680656b34f263fb5074023db44b999c68ff31ab394445ebfd1a2a41fe9a2"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==4.0.6"
+            "version": "==4.1.0"
         },
         "runs": {
             "hashes": [
@@ -85,14 +85,6 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==1.2.2"
-        },
-        "setuptools": {
-            "hashes": [
-                "sha256:6c1fccdac05a97e598fb0ae3bbed5904ccb317337a51139dcd51453611bbb987",
-                "sha256:c636ac361bc47580504644275c9ad802c50415c7522212252c033bd15f301f32"
-            ],
-            "markers": "python_version >= '3.8'",
-            "version": "==69.5.1"
         },
         "six": {
             "hashes": [
