@@ -104,12 +104,7 @@ with alive_bar(len(company_links), bar="filling") as bar:
         # Find the description text within the car page
         company_description = cars.find('div', class_="txt prodhist")
         # Strip down the text
-        company_description_text = company_description.text.strip()
-        # If there is no text in the description, it puts in the string Null for the app to interpret
-        if company_description_text == "":
-            description_text = "Null"
-        else:
-            description_text = company_description_text
+        description_text = company_description.text.strip()
         # Find the div that holds all the current and discontinued cars
         car_div = cars.find('div', class_="col2width")
         # Find the divs that hold all the current car models within the company page
