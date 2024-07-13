@@ -56,32 +56,28 @@ production = all_cars.findAll('div', class_="col3width fl carnums")
 names = all_cars.findAll('div', class_="col2width fl bcol-white carman")
 for detroit in names:
     # Find the element that holds the name
-    companies = detroit.findAll('h5')
+    companies = detroit.find('h5')
     # Increase index by one for each company
     index_num += 1
-    for company in companies:
-        # Grab the company names and uppercase them
-        company_list = company.text.upper()
-        # Find the index of the production number so that it is assigned to the correct company
-        supply = production[index_num]
-        # Get all the company links
-        a_tag = company.findAll('a')
-        for link in a_tag:
-            company_links.append(link.get('href'))
-        # Get all the production numbers
-        for manufacture in supply:
-            # Find all the in-production and out-of-production model numbers
-            assembly = supply.findAll('b', class_="col-green2")
-            not_assembly = supply.findAll('b', class_="col-red")
-            # Assign production number
-            for value in assembly:
-                models = int(value.text)
-            # Assign not in production number
-            for value in not_assembly:
-                discontinued = int(value.text)
-        # Insert into the tables
-        cursor.execute('''INSERT INTO companies (name, in_pr, ds_pr, description)
-        VALUES(?, ?, ?, ?)''', (company_list, models, discontinued, None))
+    # Grab the company names and uppercase them
+    company_list = companies.text.upper()
+    # Find the index of the production number so that it is assigned to the correct company
+    supply = production[index_num]
+    # Get all the company links
+    a_tag = detroit.find('a')
+    company_links.append(a_tag.get('href'))
+    # Get all the production numbers
+    for manufacture in supply:
+        # Find all the in-production and out-of-production model numbers
+        assembly = supply.find('b', class_="col-green2")
+        not_assembly = supply.find('b', class_="col-red")
+        # Assign production number
+        models = int(assembly.text)
+        # Assign not in production number
+        discontinued = int(not_assembly.text)
+    # Insert into the tables
+    cursor.execute('''INSERT INTO companies (name, in_pr, ds_pr, description)
+    VALUES(?, ?, ?, ?)''', (company_list, models, discontinued, None))
 
 # Commit to database
 connection.commit()
@@ -116,29 +112,25 @@ with alive_bar(len(company_links), bar="filling") as bar:
             # Set the in production value to true
             production_boolean = True
             # Find the currently produced model generations element
-            current_generations = model.findAll('b', class_="col-green2")
+            current_generations = model.find('b', class_="col-green2")
             # Loop through current generation div and set the boolean to true if it finds it
-            for generation in current_generations:
-                car_generations = int(generation.text)
+            car_generations = int(current_generations.text)
             # Find the years
             years = model.findAll('span')
             for year in years:
                 model_years = year.text
             # Find all the model names within the div
-            model_names = model.findAll('h4')
+            model_names = model.find('h4')
             # Get the name
-            for text in model_names:
-                car_model_name = text.text
+            car_model_name = model_names.text
             # Find the car type within the div
-            car_genre = model.findAll('p', class_="body")
+            car_genre = model.find('p', class_="body")
             # Get the car type
-            for value in car_genre:
-                car_type = value.text.capitalize()[:-1]
+            car_type = car_genre.text.capitalize()[:-1]
             # Find all the elements with the links to the models
-            car_links = model.findAll('a')
+            car_link = model.find('a')
             # Get the links within that element
-            for link in car_links:
-                model_links.append(link.get('href'))
+            model_links.append(car_link.get('href'))
             # Insert into the table
             cursor.execute('''INSERT INTO cars(model, type, generations, years, in_pr, company_id)
             VALUES(?, ?, ?, ?, ?, ?)''',(car_model_name, car_type, car_generations, model_years, production_boolean, id_tracker))
@@ -147,28 +139,24 @@ with alive_bar(len(company_links), bar="filling") as bar:
             # Set the in production value to false
             production_boolean = False
             # Find the generations numbers and set it to that
-            old_generation = model.findAll('b', class_="col-red")
-            for generation in old_generation:
-                car_generations = int(generation.text)
+            old_generation = model.find('b', class_="col-red")
+            car_generations = int(old_generation.text)
             # Find the years
             years = model.findAll('span')
             for year in years:
                 model_years = year.text
             # Find all the model names within the div
-            model_names = model.findAll('h4')
+            model_names = model.find('h4')
             # Get the name
-            for text in model_names:
-                car_model_name = text.text
+            car_model_name = model_names.text
             # Find the car type within the div
-            car_genre = model.findAll('p', class_="body")
+            car_genre = model.find('p', class_="body")
             # Get the car type
-            for value in car_genre:
-                car_type = value.text.capitalize()[:-1]
+            car_type = car_genre.text.capitalize()[:-1]
             # Find all the elements with the links to the models
-            car_links = model.findAll('a')
+            car_links = model.find('a')
             # Get the links within that element
-            for link in car_links:
-                model_links.append(link.get('href'))
+            model_links.append(car_links.get('href'))
             # Insert into the table
             cursor.execute('''INSERT INTO cars(model, type, generations, years, in_pr, company_id)
             VALUES(?, ?, ?, ?, ?, ?)''',(car_model_name, car_type, car_generations, model_years, production_boolean, id_tracker))
