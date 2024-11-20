@@ -26,11 +26,11 @@
         },
         "alive-progress": {
             "hashes": [
-                "sha256:347220c1858e3abe137fa0746895668c04df09c5261a13dc03f05795e8a29be5",
-                "sha256:42e399a66c8150dc507602dff7b7953f105ef11faf97ddaa6d27b1cbf45c4c98"
+                "sha256:0677929f8d3202572e9d142f08170b34dbbe256cc6d2afbf75ef187c7da964a8",
+                "sha256:ede29d046ff454fe56b941f686f89dd9389430c4a5b7658e445cb0b80e0e4deb"
             ],
             "index": "pypi",
-            "version": "==3.1.5"
+            "version": "==3.2.0"
         },
         "beautifulsoup4": {
             "hashes": [
@@ -72,11 +72,11 @@
         },
         "readchar": {
             "hashes": [
-                "sha256:2a587a27c981e6d25a518730ad4c88c429c315439baa6fda55d7a8b3ac4cb62a",
-                "sha256:44807cbbe377b72079fea6cba8aa91c809982d7d727b2f0dbb2d1a8084914faa"
+                "sha256:91ce3faf07688de14d800592951e5575e9c7a3213738ed01d394dcc949b79adb",
+                "sha256:a769305cd3994bb5fa2764aa4073452dc105a4ec39068ffe6efd3c20c60acc77"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==4.2.0"
+            "version": "==4.2.1"
         },
         "runs": {
             "hashes": [
